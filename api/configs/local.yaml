@@ -1,0 +1,25 @@
+addr: ":8080"
+base_dir: "temp"
+queue_capacity: 64
+pool_size: 16
+task_ttl: 60s
+max_upload_mb: 200
+shutdown_timeout: 10s
+
+redis:
+  addr: "localhost:6379"
+  password: "super_secret_password"
+  db: 0
+
+minio:
+  endpoint: "localhost:9000"
+  access_key_id: "ebat"
+  secret_access_key: "kopat322"
+  use_ssl: false
+  bucket: "dwg-files"
+
+nats:
+  url: "nats://localhost:4222"
+  queue_name: "dwg-converter"
+  max_reconnects: 10
+  subject: "dwg.conversion"
