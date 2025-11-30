@@ -14,8 +14,6 @@ import (
 	mio "github.com/you-humble/dwgtopdf/core/libs/minio"
 )
 
-const cfgPath = "./converter/configs/local.yaml"
-
 type dependencyInjector struct {
 	cfg    *config.Config
 	logger *slog.Logger
@@ -31,7 +29,7 @@ func newDI() *dependencyInjector {
 
 func (di *dependencyInjector) Config() *config.Config {
 	if di.cfg == nil {
-		di.cfg = config.MustLoad(cfgPath)
+		di.cfg = config.MustLoad()
 	}
 
 	return di.cfg

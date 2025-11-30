@@ -8,6 +8,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const defaultCfgPath = "./configs/local.yaml"
+
 type Config struct {
 	Addr            string        `yaml:"addr"`
 	ShutdownTimeout time.Duration `yaml:"shutdown_timeout"`
@@ -46,10 +48,11 @@ type NATS struct {
 	Subject       string `yaml:"subject"`
 }
 
-func MustLoad(path string) *Config {
-	data, err := os.ReadFile(path)
+func MustLoad() *Config {
+	cfgPath := configPath()
+	data, err := os.ReadFile(cfgPath)
 	if err != nil {
-		log.Fatalf("config: cannot read file %q: %v", path, err)
+		log.Fatalf("config: cannot read file %q: %v", cfgPath, err)
 	}
 
 	var cfg Config
@@ -77,4 +80,11 @@ func MustLoad(path string) *Config {
 	}
 
 	return &cfg
+}
+
+func configPath() string {
+	if v := os.Getenv("CONFIG_PATH"); v != "" {
+		return v
+	}
+	return defaultCfgPath
 }

@@ -22,8 +22,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-const cfgPath = "./distributor/configs/local.yaml"
-
 type Distributor interface {
 	Run(ctx context.Context)
 	Stop(ctx context.Context)
@@ -54,7 +52,7 @@ func newDI() *dependencyInjector {
 
 func (di *dependencyInjector) Config() *config.Config {
 	if di.cfg == nil {
-		di.cfg = config.MustLoad(cfgPath)
+		di.cfg = config.MustLoad()
 	}
 
 	return di.cfg
@@ -78,11 +76,12 @@ func (di *dependencyInjector) Logger() *slog.Logger {
 
 func (di *dependencyInjector) GRPCConnect(ctx context.Context) *grpc.ClientConn {
 	if di.grpcConn == nil {
-		cl, err := converter.NewConnection("localhost:50051")
+		cl, err := converter.NewConnection(di.Config().GRPCAddr)
 		if err != nil {
 			log.Fatalf("GRPCConnect: %+v", err)
 		}
 		di.grpcConn = cl
+		slog.Info("grpc connection successed", slog.String("addr", di.Config().GRPCAddr))
 	}
 
 	return di.grpcConn

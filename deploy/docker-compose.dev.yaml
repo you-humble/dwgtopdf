@@ -1,0 +1,108 @@
+services:
+
+  ingress:
+    build:
+      context: ..
+      dockerfile: deploy/docker/Dockerfile.ingress
+    container_name: ingress
+    depends_on:
+      - minio
+      - redis
+      - nats
+      - converter
+      - distributor
+    environment:
+      CONFIG_PATH: /configs/dev.yaml
+    volumes:
+      - shared-temp:/app/temp
+    ports:
+      - "8080:8080"
+  distributor:
+    build:
+      context: ..
+      dockerfile: deploy/docker/Dockerfile.distributor
+    container_name: distributor
+    depends_on:
+      - minio
+      - redis
+      - nats
+      - converter
+    environment:
+      CONFIG_PATH: /configs/dev.yaml
+    volumes:
+      - shared-temp:/app/temp
+
+  converter:
+    build:
+      context: ..
+      dockerfile: deploy/docker/Dockerfile.converter
+    container_name: converter
+    depends_on:
+      - minio
+    environment:
+      CONFIG_PATH: /configs/dev.yaml
+    volumes:
+      - shared-temp:/app/temp
+    ports:
+      - "50051:50051"
+
+  #http://localhost:9001
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ebat
+      MINIO_ROOT_PASSWORD: kopat322
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+
+  nats:
+    image: nats:2.10
+    command: ["-js", "-sd", "/data"]
+    ports:
+      - "4222:4222" 
+      - "8222:8222" 
+    volumes:
+      - nats-data:/data
+
+  #http://localhost:4222 
+  nats-box: 
+    image: natsio/nats-box:latest
+    depends_on:
+      - nats
+    entrypoint: /bin/sh
+    tty: true
+    environment:
+      NATS_URL: "nats://nats:4222"
+
+  #http://localhost:6379 
+  redis:
+    image: redis:8-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: ["redis-server", "--requirepass", "super_secret_password", "--appendonly", "yes"]
+    environment:
+      REDIS_PASSWORD: "super_secret_password"
+
+  # http://localhost:8090
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: redis-commander
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOSTS: "local:redis:6379:0:super_secret_password"
+    ports:
+      - "8090:8090"
+
+volumes:
+  shared-temp:
+  minio-data:
+  nats-data:
+  redis-data:

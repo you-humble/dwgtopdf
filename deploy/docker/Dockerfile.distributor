@@ -1,0 +1,21 @@
+FROM golang:1.25-alpine AS builder
+
+WORKDIR /app
+
+COPY ./core ./core
+
+COPY ./distributor/go.mod ./distributor/go.sum ./distributor/
+
+WORKDIR /app/distributor
+RUN go mod download
+
+COPY ./distributor .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o distributor-service ./cmd/distributor
+
+FROM alpine:3.22
+WORKDIR /app
+
+COPY --from=builder /app/distributor/distributor-service /usr/local/bin/distributor-service
+COPY --from=builder /app/distributor/configs /configs
+
+ENTRYPOINT ["/usr/local/bin/distributor-service"]

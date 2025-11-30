@@ -1,10 +1,10 @@
-grpc_addr: "localhost:50051"
-base_dir: "../temp"
+grpc_addr: "converter:50051"
+base_dir: "temp"
 queue_capacity: 64
 pool_size: 16
 
 minio:
-  endpoint: "localhost:9000"
+  endpoint: "minio:9000"
   access_key_id: "ebat"
   secret_access_key: "kopat322"
   use_ssl: false

@@ -8,21 +8,18 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/you-humble/dwgtopdf/api/internal/infra/config"
-	"github.com/you-humble/dwgtopdf/api/internal/infra/queue"
-	filestore "github.com/you-humble/dwgtopdf/api/internal/infra/store/file"
-	taskstore "github.com/you-humble/dwgtopdf/api/internal/infra/store/task"
-	"github.com/you-humble/dwgtopdf/api/internal/transport"
-	"github.com/you-humble/dwgtopdf/api/internal/usecase"
+	"github.com/nats-io/nats.go"
+	"github.com/redis/go-redis/v9"
 	mio "github.com/you-humble/dwgtopdf/core/libs/minio"
 	natsq "github.com/you-humble/dwgtopdf/core/libs/nats"
 	rediscli "github.com/you-humble/dwgtopdf/core/libs/redis"
-
-	"github.com/nats-io/nats.go"
-	"github.com/redis/go-redis/v9"
+	"github.com/you-humble/dwgtopdf/ingress/internal/infra/config"
+	"github.com/you-humble/dwgtopdf/ingress/internal/infra/queue"
+	filestore "github.com/you-humble/dwgtopdf/ingress/internal/infra/store/file"
+	taskstore "github.com/you-humble/dwgtopdf/ingress/internal/infra/store/task"
+	"github.com/you-humble/dwgtopdf/ingress/internal/transport"
+	"github.com/you-humble/dwgtopdf/ingress/internal/usecase"
 )
-
-const cfgPath = "./api/configs/local.yaml"
 
 type Router interface {
 	MountRoutes(*http.ServeMux) *http.ServeMux
@@ -53,7 +50,7 @@ func newDI() *dependencyInjector {
 
 func (di *dependencyInjector) Config() *config.Config {
 	if di.cfg == nil {
-		di.cfg = config.MustLoad(cfgPath)
+		di.cfg = config.MustLoad()
 	}
 
 	return di.cfg

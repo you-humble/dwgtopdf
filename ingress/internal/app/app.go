@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/you-humble/dwgtopdf/api/internal/transport"
+	"github.com/you-humble/dwgtopdf/ingress/internal/transport"
 )
 
 type app struct {

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/you-humble/dwgtopdf/api/internal/infra/store/file/replicator"
+	"github.com/you-humble/dwgtopdf/ingress/internal/infra/store/file/replicator"
 
 	"golang.org/x/sync/errgroup"
 )

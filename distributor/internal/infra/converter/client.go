@@ -9,10 +9,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-// "localhost:50051"
 func NewConnection(addr string) (*grpc.ClientConn, error) {
 	conn, err := grpc.NewClient(
-		"localhost:50051",
+		addr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {

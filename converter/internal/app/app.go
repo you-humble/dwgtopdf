@@ -27,7 +27,7 @@ func New(ctx context.Context) *app {
 
 	return &app{
 		di:   di,
-		addr: ":50051",
+		addr: di.Config().GRPCAddr,
 		srv:  grpcServer,
 	}
 }

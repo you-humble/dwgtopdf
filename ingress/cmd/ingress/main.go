@@ -5,7 +5,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/you-humble/dwgtopdf/api/internal/app"
+	"github.com/you-humble/dwgtopdf/ingress/internal/app"
 )
 
 func main() {

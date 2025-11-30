@@ -1,0 +1,22 @@
+FROM golang:1.25-alpine AS builder
+
+WORKDIR /app
+
+COPY ./core ./core
+
+COPY ./ingress/go.mod ./ingress/go.sum ./ingress/
+
+
+WORKDIR /app/ingress
+RUN go mod download
+
+COPY ./ingress .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ingress-service ./cmd/ingress
+
+FROM alpine:3.22
+WORKDIR /app
+
+COPY --from=builder /app/ingress/ingress-service /usr/local/bin/ingress-service
+COPY --from=builder /app/ingress/configs /configs
+
+ENTRYPOINT ["/usr/local/bin/ingress-service"]

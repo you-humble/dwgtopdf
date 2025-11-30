@@ -21,7 +21,6 @@ func (a *app) Run(ctx context.Context) error {
 
 	defer d.Stop(ctx)
 	defer a.di.GRPCConnect(ctx).Close()
-	slog.Info("GRPC connected")
 	d.Run(ctx)
 	slog.Info("distributor running...")
 	// cleanup tasks

@@ -1,10 +1,10 @@
+addr: ":8080"
 base_dir: "../temp"
-grpc_addr: "localhost:50051"
 queue_capacity: 64
 pool_size: 16
 task_ttl: 60s
-task_cleanup_interval: 60s
-conversion_timeout: 10s
+max_upload_mb: 200
+shutdown_timeout: 10s
 
 redis:
   addr: "localhost:6379"

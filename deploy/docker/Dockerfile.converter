@@ -1,19 +1,21 @@
 FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
-COPY go.mod go.sum ./
+
+COPY ./core ./core
+
+COPY ./converter/go.mod ./converter/go.sum ./converter/
+
+WORKDIR /app/converter
 RUN go mod download
 
-COPY . .
+COPY ./converter .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o converter-service ./cmd/converter
 
-FROM alpine:3.19
+FROM alpine:3.22
 WORKDIR /app
 
-RUN mkdir -p /app/data
+COPY --from=builder /app/converter/converter-service /usr/local/bin/converter-service
+COPY --from=builder /app/converter/configs /configs
 
-COPY --from=builder /app/converter /usr/local/bin/converter
-
-EXPOSE 50051
-
-ENTRYPOINT ["/usr/local/bin/converter", "-addr=:50051", "-base-dir=/app/data"]
+ENTRYPOINT ["/usr/local/bin/converter-service"]

@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/you-humble/dwgtopdf/api/internal/domain"
+	"github.com/you-humble/dwgtopdf/ingress/internal/domain"
 
 	"github.com/google/uuid"
 )
